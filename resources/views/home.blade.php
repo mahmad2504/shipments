@@ -37,7 +37,8 @@
     <body>
 	<div class="flex-container">
 		<div class="row"> 
-			<div class="flex-item"> 	
+			<div class="flex-item"> 
+				<h4>Shipments Dashboard - Pakistan</h4>
 			</div>
 			<div class="flex-item"> 
 				<br>
@@ -47,7 +48,7 @@
 			</div>
 			
 			<div class="flex-item">
-				<!-- <small> Last Updated  <a id="update" href="#">Click to update</a> </small> -->
+				<small style="font-size:10px;">Dashboard created by mumtaz.ahmad@siemens.com for engineering operations Lahore<a id="update" href="#"></a> </small>
 			</div>
 		</div>
 	</div>
