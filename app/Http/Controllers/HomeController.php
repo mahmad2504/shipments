@@ -30,6 +30,14 @@ class HomeController extends Controller
 			unset($tickets[$i]->_id);
 			unset($tickets[$i]->id);
 		}
-		return view('home',compact('tickets'));
+		$lastupdated="Never Updated";
+		if(file_exists("../lastupdated"))
+		{
+			$lastupdated = file_get_contents("../lastupdated");
+			$lastupdated =  new \DateTime($lastupdated);
+			$lastupdated->setTimezone(new \DateTimeZone('Asia/Karachi'));
+			$lastupdated=$lastupdated->format('Y-m-d H:i:s');
+		}
+		return view('home',compact('tickets','lastupdated'));
 	}
 }

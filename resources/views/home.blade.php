@@ -48,7 +48,8 @@
 			</div>
 			
 			<div class="flex-item">
-				<small style="font-size:10px;">Dashboard created by mumtaz.ahmad@siemens.com for engineering operations Pakistan<a id="update" href="#"></a> </small>
+				<small style="font-size:10px;">Dashboard created by mumtaz.ahmad@siemens.com for engineering operations Pakistan<a id="update" href="#"></a></small><br>
+				<small style="font-size:10px;">Last updated on {{$lastupdated}} PKT</small>
 			</div>
 		</div>
 	</div>
