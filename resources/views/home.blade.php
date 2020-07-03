@@ -48,7 +48,7 @@
 			</div>
 			
 			<div class="flex-item">
-				<small style="font-size:10px;">Dashboard created by mumtaz.ahmad@siemens.com for engineering operations Lahore<a id="update" href="#"></a> </small>
+				<small style="font-size:10px;">Dashboard created by mumtaz.ahmad@siemens.com for engineering operations Pakistan<a id="update" href="#"></a> </small>
 			</div>
 		</div>
 	</div>
