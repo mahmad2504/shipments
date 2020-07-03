@@ -47,7 +47,7 @@
 			</div>
 			
 			<div class="flex-item">
-				<small> Last Updated  <a id="update" href="#">Click to update</a> </small>
+				<!-- <small> Last Updated  <a id="update" href="#">Click to update</a> </small> -->
 			</div>
 		</div>
 	</div>
@@ -65,7 +65,7 @@
 
 	var columns=[
 	{title:"Shipment", field:"name", sorter:"string", align:"left"},
-	{title:"Progress", field:"name", align:"center",width:300,visible:true,formatter:
+	{title:"Status", field:"name", align:"center",width:300,visible:true,formatter:
 		function(cell, formatterParams, onRendered)
 		{
 			var row = cell.getRow().getData();
@@ -80,7 +80,7 @@
 			//return '<a href="'+jira_url+cell.getValue()+'">'+cell.getValue()+'</a>';
 		}
 	},
-	{title:"Time Consumed", field:"progress", sorter:"number", align:"left",visible:true,
+	{title:"Progress", field:"progress", sorter:"number", align:"left",visible:true,
 			formatter:function(cell, formatterParams, onRendered)
 		{
 			time_consumed = cell.getValue();
