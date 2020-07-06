@@ -11,7 +11,7 @@ class Sync extends Command
      *
      * @var string
      */
-    protected $signature = 'sync';
+    protected $signature = 'sync {--beat=0}';
 
     /**
      * The console command description.
@@ -56,7 +56,11 @@ class Sync extends Command
 
     public function handle()
     {
-		
+		$minutes = $this->option('beat');
+		if($minutes % 10 == 0)// Every 10 minutes
+		    file_get_contents("https://script.google.com/macros/s/AKfycbwCNrLh0BxlYtR3I9iW2Z-4RQK88Hryd4DEC03lIYLoLCce80A/exec?func=alive&device=localshipments");
+		else
+			return;
 	//$url = "https://api.trello.com/1/cards/".'5efed2f133625080952d69bb'."?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
 	
 	//$url = "https://api.trello.com/1/lists/".'5e96d7c8ebdb461cc84f83ba'."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
