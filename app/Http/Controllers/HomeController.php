@@ -29,7 +29,25 @@ class HomeController extends Controller
 			$tickets[$i] = $tickets[$i]->jsonSerialize();
 			unset($tickets[$i]->_id);
 			unset($tickets[$i]->id);
+			$desc = str_replace("\n"," ",$tickets[$i]->desc);
+			$parts = explode('**',$desc);
+			if(count($parts)>2)
+				$tickets[$i]->details = $parts[2];
+			else
+				$tickets[$i]->details = "Not Found";
+			
+			if(count($parts)>4)
+				$tickets[$i]->source = $parts[4];
+			else
+				$tickets[$i]->source = "Not Found";
+			
+			if(count($parts)>6)
+				$tickets[$i]->dest = $parts[6];
+			else
+				$tickets[$i]->dest = "Not Found";
 		}
+		
+	
 		$lastupdated="Never Updated";
 		if(file_exists("../lastupdated"))
 		{

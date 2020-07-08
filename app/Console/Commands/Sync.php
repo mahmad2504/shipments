@@ -33,16 +33,22 @@ class Sync extends Command
     }
     public function UpdateTicket($ticket)
 	{
-		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges";
+		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels";
 		$data = file_get_contents($url);
 		$data = json_decode($data);
 		
 		$ticket->name = $data->name;
+		$ticket->desc = $data->desc;
 		$ticket->checkItems = $data->badges->checkItems;
 		$ticket->checkItemsChecked = $data->badges->checkItemsChecked;
 		$ticket->due = explode("T",$data->badges->due)[0];
 		$ticket->progress = ($ticket->checkItemsChecked/$ticket->checkItems)*100;
-		
+		$ticket->label = '';
+		foreach($data->labels as $label)
+		{
+			$ticket->label = $label->name;
+			break;
+		}
 		//$sticket->dateLastActivity= $ticket->dateLastActivity;
 		$this->db->Update(["id"=>$ticket->id],$ticket);
 	}

@@ -38,7 +38,7 @@
 	<div class="flex-container">
 		<div class="row"> 
 			<div class="flex-item"> 
-				<h4>Shipments Dashboard - Pakistan</h4>
+				<h4>Local Shipments Dashboard - Pakistan</h4>
 			</div>
 			<div class="flex-item"> 
 				<br>
@@ -66,7 +66,12 @@
 	
 
 	var columns=[
-	{title:"Shipment", field:"name", sorter:"string", align:"left"},
+	
+	{title:"Hardware Details", field:"details", sorter:"string", align:"left",width:"350"},
+	{title:"Source", field:"source", sorter:"string", align:"left",width:"150"},
+	{title:"Dest", field:"dest", sorter:"string", align:"left",width:"150"},
+	{title:"Team", field:"label", sorter:"string", align:"left",width:"100"},
+	{title:"Shipment", field:"name", sorter:"string", align:"left",visible:false},
 	{title:"Status", field:"name", align:"center",width:300,visible:true,formatter:
 		function(cell, formatterParams, onRendered)
 		{
@@ -82,7 +87,7 @@
 			//return '<a href="'+jira_url+cell.getValue()+'">'+cell.getValue()+'</a>';
 		}
 	},
-	{title:"Progress", field:"progress", sorter:"number", align:"left",visible:true,
+	{title:"Progress", field:"progress", sorter:"number", align:"left",visible:false,
 			formatter:function(cell, formatterParams, onRendered)
 		{
 			time_consumed = cell.getValue();
@@ -134,6 +139,7 @@
 			tooltips:true,
 			//autoColumns:true,
 		});
+		//table.setFilter("label", "=", "AND");
 		
 	});
 	
