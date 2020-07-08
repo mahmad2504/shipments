@@ -37,9 +37,11 @@
     <body>
 	<div class="flex-container">
 		<div class="row"> 
-			<div class="flex-item"> 
-				<h4>Local Shipments Dashboard - Pakistan</h4>
+			<div style="font-weight:bold;font-size:20px;line-height: 50px;height:50px;background-color:#4682B4;color:white;" class="flex-item"> 
+				Local Shipments Dashboard - Pakistan
 			</div>
+			<hr>
+			<span style="font-weight:bold;">Team&nbsp&nbsp</span><select id='select'>Team</select>
 			<div class="flex-item"> 
 				<br>
 			</div>
@@ -60,16 +62,31 @@
 	<script src="{{ asset('attention/attention.js') }}" ></script>
 	<script>
 	//define data
+	var labels = {};
 	var tabledata = @json($tickets);
-	console.log(tabledata);
+	for(i=0;i<tabledata.length;i++)
+	{
+		var row=tabledata[i];
+		row.label = row.label.replace(/ /g, '');
+		if(row.label.length == 0)
+			row.label = 'Others';
+		if(row.label=='Others')
+			continue;
+		labels[row.label]=row.label;
+	}
+	labels['Others']='Others';
+	$('#select').append('<option value="'+'Select'+'" selected="selected">'+'Select'+'</option>');
+	for(var i in labels)
+    {
+		console.log(labels[i]);
+		$('#select').append('<option value="'+labels[i]+'" >'+labels[i]+'</option>');
+	}
 	
-	
-
 	var columns=[
 	
 	{title:"Hardware Details", field:"details", sorter:"string", align:"left",width:"350"},
 	{title:"Source", field:"source", sorter:"string", align:"left",width:"150"},
-	{title:"Dest", field:"dest", sorter:"string", align:"left",width:"150"},
+	{title:"Destination", field:"dest", sorter:"string", align:"left",width:"150"},
 	{title:"Team", field:"label", sorter:"string", align:"left",width:"100"},
 	{title:"Shipment", field:"name", sorter:"string", align:"left",visible:false},
 	{title:"Status", field:"name", align:"center",width:300,visible:true,formatter:
@@ -90,7 +107,8 @@
 	{title:"Progress", field:"progress", sorter:"number", align:"left",visible:false,
 			formatter:function(cell, formatterParams, onRendered)
 		{
-			time_consumed = cell.getValue();
+			var time_consumed = cell.getValue();
+			var row = cell.getRow();
 			$(cell.getElement()).css({"background":"white"});
 			//if(time_consumed == 100)
 			//{
@@ -126,6 +144,10 @@
 	{title:"Due", field:"due", sorter:"string", align:"left",visible:true,
 		formatter:function(cell, formatterParams, onRendered)
 		{
+			var data = cell.getRow().getData();
+			if(data.progress ==100)
+				$(cell.getRow().getElement()).css({"color":"#989898"});
+			
 			return new Date(cell.getValue()).toString().substr(0,15);
 		}
 	}
@@ -138,6 +160,12 @@
 			columns:columns,
 			tooltips:true,
 			//autoColumns:true,
+		});
+		$('select').on('change', function() {
+			if(this.value == "Select")
+				table.clearFilter(true);
+			else
+				table.setFilter("label", "=", this.value);
 		});
 		//table.setFilter("label", "=", "AND");
 		
