@@ -33,7 +33,7 @@ class Sync extends Command
     }
     public function UpdateTicket($ticket)
 	{
-		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels";
+		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels,url";
 		$data = file_get_contents($url);
 		$data = json_decode($data);
 		
@@ -41,6 +41,7 @@ class Sync extends Command
 		$ticket->desc = $data->desc;
 		$ticket->checkItems = $data->badges->checkItems;
 		$ticket->checkItemsChecked = $data->badges->checkItemsChecked;
+		$ticket->url = $data->url;
 		$ticket->due = explode("T",$data->badges->due)[0];
 		$ticket->progress = ($ticket->checkItemsChecked/$ticket->checkItems)*100;
 		$ticket->label = '';
