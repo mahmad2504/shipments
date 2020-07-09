@@ -38,7 +38,8 @@
 	<div class="flex-container">
 		<div class="row"> 
 			<div style="font-weight:bold;font-size:20px;line-height: 50px;height:50px;background-color:#4682B4;color:white;" class="flex-item"> 
-			{{ $team }} - Local Shipments Dashboard - Pakistan	
+			 <img style="float:left;" height="50px" src="/images/mentor.png"></img>
+			 <div style="margin-right:150px;">{{ $team }} - Local Shipments Dashboard - Pakistan</div>
 			</div>
 			<div class="flex-item"> 
 			<small class="flex-item" style="font-size:12px;">This Dashboard lists down Open,In progress and recently delivered shipment tickets<a id="update" href="#"></a></small>
