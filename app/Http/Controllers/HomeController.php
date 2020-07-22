@@ -44,7 +44,14 @@ class HomeController extends Controller
 			$desc = str_replace("\n"," ",$tickets[$i]->desc);
 			$parts = explode('**',$desc);
 			if(count($parts)>2)
-				$tickets[$i]->details = $parts[2];
+			{
+				$tickets[$i]->details = trim($parts[2]);
+				if(strlen($tickets[$i]->details)>0)
+				{
+					if($tickets[$i]->details[0] == '-')
+						$tickets[$i]->details[0]=" ";
+				}
+			}
 			else
 				$tickets[$i]->details = "Not Found";
 			
