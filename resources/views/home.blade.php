@@ -164,7 +164,7 @@
 			return  '<span style="text-align: center;display: inline-block;width:'+time_consumed+'%;color:'+fcolor+';background-color:'+bcolor+';"><small>'+time_consumed+'%</small></span>';
 		}
 	},
-	{title:"Due", field:"due", sorter:"string", align:"left",visible:true,
+	{title:"Delivery", field:"due", sorter:"string", align:"left",visible:true,
 		formatter:function(cell, formatterParams, onRendered)
 		{
 			var data = cell.getRow().getData();
