@@ -94,7 +94,7 @@
 	}
 	
 	var columns=[
-	
+	{title:"Requestor", field:"requestor", sorter:"string", align:"left",width:"100"},
 	{title:"Hardware Details", field:"details", sorter:"string", align:"left",width:"350",formatter:
 		function(cell, formatterParams, onRendered)
 		{
@@ -107,10 +107,10 @@
 			//return '<a href="'+jira_url+cell.getValue()+'">'+cell.getValue()+'</a>';
 		}
 	},
-	{title:"Source", field:"source", sorter:"string", align:"left",width:"150"},
-	{title:"Destination", field:"dest", sorter:"string", align:"left",width:"150"},
-	{title:"Priority", field:"priority", sorter:"string", align:"left"},
-	{title:"Team", field:"label", sorter:"string", align:"left",width:"100"},
+	{title:"Source", field:"source", sorter:"string", align:"left",width:"120"},
+	{title:"Destination", field:"dest", sorter:"string", align:"left",width:"120"},
+	{title:"Priority", field:"priority", sorter:"string", align:"left",width:"80"},
+	{title:"Team", field:"label", sorter:"string", align:"left",width:"80"},
 	{title:"Shipment", field:"name", sorter:"string", align:"left",visible:false},
 	{title:"Status", field:"name", align:"center",width:300,visible:true,formatter:
 		function(cell, formatterParams, onRendered)
@@ -168,13 +168,17 @@
 		formatter:function(cell, formatterParams, onRendered)
 		{
 			var data = cell.getRow().getData();
-			if(data.progress ==100)
+			if((data.dueComplete === true)&&(data.progress ==100))
+			{
 				$(cell.getRow().getElement()).css({"color":"#989898"});
-			
+				return new Date(data.deliveredon).toString().substr(0,15);
+			}
 			return new Date(cell.getValue()).toString().substr(0,15);
 		}
-	}
-	
+	},
+	{title:"Due", field:"deliveredon", sorter:"string", align:"left",visible:false},
+	{title:"Due", field:"dueComplete", sorter:"string", align:"left",visible:false}
+
 	];
 	$(document).ready(function()
 	{

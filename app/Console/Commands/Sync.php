@@ -33,12 +33,38 @@ class Sync extends Command
     }
     public function UpdateTicket($ticket)
 	{
-		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels,url";
+		
+		//Fetch activity
+		// dueComplete should be set when delivered 
+		//https://api.trello.com/1/cards/5f0eba3c9b5a3854607f8573/actions?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9&filter=updateCard&fields=date
+		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels,url,dueComplete";
+		//dd($url);
 		$data = file_get_contents($url);
+		
 		$data = json_decode($data);
 		
 		$ticket->name = $data->name;
 		$ticket->desc = $data->desc;
+		$ticket->dueComplete = $data->dueComplete;
+
+		if(($ticket->dueComplete)||(!isset($ticket->createdon)))
+		{
+			$url = "https://api.trello.com/1/cards/".$ticket->id."/actions?key=".$this->key.'&token='.$this->token."&filter=updateCard";
+			$actions = file_get_contents($url);
+			$actions = json_decode($actions);
+			
+			foreach($actions as $action)
+			{
+				if(isset($action->data->card->dueComplete))
+					if($action->data->card->dueComplete === true)
+						$ticket->deliveredon = explode("T",$action->date)[0];
+			}	
+			if(isset($action))
+				$ticket->createdon = explode("T",$action->date)[0];
+		}
+		if($ticket->dueComplete == false)
+			$ticket->deliveredon = '';
+		
 		$ticket->checkItems = $data->badges->checkItems;
 		$ticket->checkItemsChecked = $data->badges->checkItemsChecked;
 		$ticket->url = $data->url;
@@ -137,13 +163,14 @@ class Sync extends Command
 				}
 				foreach($stickets as $sticket)
 				{
+					//if($sticket->dueComplete === true)
 					if(($sticket->dateLastActivity != $ticket->dateLastActivity)||!isset($sticket->name))
 					{
 						echo "Processing ticket $inprocess/$total ".$sticket->id."\n";
 						$sticket->dateLastActivity= $ticket->dateLastActivity;
 						$sticket->dayLastActivity= $ticket->dayLastActivity;
 						$this->UpdateTicket($sticket);
-	
+						
 					}
 					break;
 				}

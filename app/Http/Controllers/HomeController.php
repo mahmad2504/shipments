@@ -63,7 +63,17 @@ class HomeController extends Controller
 			else
 				$tickets[$i]->priority = "Low";
 			
+			if(count($parts)>10)
+				$tickets[$i]->requestor = trim($parts[10]);
+			else
+				$tickets[$i]->requestor = "";
 			
+			if(strlen($tickets[$i]->requestor)>0)
+			{
+				if(is_numeric(trim($tickets[$i]->requestor[0])))
+					$tickets[$i]->requestor = "";
+	
+			}
 			$parts = explode("-",$tickets[$i]->priority);
 
 			$tickets[$i]->priority = trim($parts[0]);
