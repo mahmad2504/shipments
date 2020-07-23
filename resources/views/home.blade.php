@@ -75,15 +75,18 @@
 	var admin = {{$admin}};
 	
 	var tabledata = @json($tickets);
+	
 	for(i=0;i<tabledata.length;i++)
 	{
 		var row=tabledata[i];
+		
 		row.label = row.label.replace(/ /g, '');
 		if(row.label.length == 0)
 			row.label = 'Others';
 		if(row.label=='Others')
 			continue;
 		labels[row.label]=row.label;
+		
 	}
 	labels['Others']='Others';
 	$('#select').append('<option value="'+'Select'+'" selected="selected">'+'Select'+'</option>');
@@ -94,6 +97,7 @@
 	}
 	
 	var columns=[
+	//{title:"ID", field:"index", sorter:"string", align:"left",width:"1"},
 	{title:"Requestor", field:"requestor", sorter:"string", align:"left",width:"100"},
 	{title:"Hardware Details", field:"details", sorter:"string", align:"left",width:"350",formatter:
 		function(cell, formatterParams, onRendered)
@@ -112,7 +116,7 @@
 	{title:"Priority", field:"priority", sorter:"string", align:"left",width:"80"},
 	{title:"Team", field:"label", sorter:"string", align:"left",width:"80"},
 	{title:"Shipment", field:"name", sorter:"string", align:"left",visible:false},
-	{title:"Status", field:"name", align:"center",width:300,visible:true,formatter:
+	{title:"Status", field:"name", align:"center",width:270,visible:true,formatter:
 		function(cell, formatterParams, onRendered)
 		{
 			var row = cell.getRow().getData();
@@ -164,6 +168,13 @@
 			return  '<span style="text-align: center;display: inline-block;width:'+time_consumed+'%;color:'+fcolor+';background-color:'+bcolor+';"><small>'+time_consumed+'%</small></span>';
 		}
 	},
+	{title:"Requested", field:"createdon", sorter:"string", align:"left",visible:true,
+		formatter:function(cell, formatterParams, onRendered)
+		{
+			return new Date(cell.getValue()).toString().substr(0,15);
+		}
+	
+	},
 	{title:"Delivery", field:"due", sorter:"string", align:"left",visible:true,
 		formatter:function(cell, formatterParams, onRendered)
 		{
@@ -176,6 +187,7 @@
 			return new Date(cell.getValue()).toString().substr(0,15);
 		}
 	},
+	
 	{title:"Due", field:"deliveredon", sorter:"string", align:"left",visible:false},
 	{title:"Due", field:"dueComplete", sorter:"string", align:"left",visible:false}
 

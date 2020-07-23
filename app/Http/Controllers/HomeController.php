@@ -40,7 +40,7 @@ class HomeController extends Controller
 		{
 			$tickets[$i] = $tickets[$i]->jsonSerialize();
 			unset($tickets[$i]->_id);
-			unset($tickets[$i]->id);
+			//unset($tickets[$i]->id);
 			$desc = str_replace("\n"," ",$tickets[$i]->desc);
 			$parts = explode('**',$desc);
 			if(count($parts)>2)
