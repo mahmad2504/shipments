@@ -80,8 +80,8 @@
 	{
 		var row=tabledata[i];
 		
-		row.label = row.label.replace(/ /g, '');
-		if(row.label.length == 0)
+		var l = row.label.replace(/ /g, '');
+		if(l.length == 0)
 			row.label = 'Others';
 		if(row.label=='Others')
 			continue;
@@ -111,10 +111,10 @@
 			//return '<a href="'+jira_url+cell.getValue()+'">'+cell.getValue()+'</a>';
 		}
 	},
-	{title:"Source", field:"source", sorter:"string", align:"left",width:"120"},
-	{title:"Destination", field:"dest", sorter:"string", align:"left",width:"120"},
-	{title:"Priority", field:"priority", sorter:"string", align:"left",width:"80"},
-	{title:"Team", field:"label", sorter:"string", align:"left",width:"80"},
+	{title:"Source", field:"source", sorter:"string", align:"left",width:"110"},
+	{title:"Destination", field:"dest", sorter:"string", align:"left",width:"110"},
+	{title:"Priority", field:"priority", sorter:"string", align:"left",width:"60"},
+	{title:"Team", field:"label", sorter:"string", align:"left",width:"100"},
 	{title:"Shipment", field:"name", sorter:"string", align:"left",visible:false},
 	{title:"Status", field:"name", align:"center",width:270,visible:true,formatter:
 		function(cell, formatterParams, onRendered)
@@ -168,14 +168,14 @@
 			return  '<span style="text-align: center;display: inline-block;width:'+time_consumed+'%;color:'+fcolor+';background-color:'+bcolor+';"><small>'+time_consumed+'%</small></span>';
 		}
 	},
-	{title:"Requested", field:"createdon", sorter:"string", align:"left",visible:true,
+	{title:"Requested date", field:"createdon", sorter:"string", align:"left",visible:true,
 		formatter:function(cell, formatterParams, onRendered)
 		{
 			return new Date(cell.getValue()).toString().substr(0,15);
 		}
 	
 	},
-	{title:"Delivery", field:"due", sorter:"string", align:"left",visible:true,
+	{title:"Delivery date", field:"due", sorter:"string", align:"left",visible:true,
 		formatter:function(cell, formatterParams, onRendered)
 		{
 			var data = cell.getRow().getData();
