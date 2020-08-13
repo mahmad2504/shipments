@@ -7,6 +7,7 @@
         <title>Local Shipments Pakistan</title>
 		<link rel="stylesheet" href="{{ asset('tabulator/css/tabulator.min.css') }}" />
 		<link rel="stylesheet" href="{{ asset('attention/attention.css') }}" />
+		<link rel="stylesheet" href="{{ asset('stepprogress/stepprogressbar.css') }}" />
     <style>
 		.tabulator [tabulator-field="summary"]{
 				max-width:200px;
@@ -116,12 +117,49 @@
 	{title:"Priority", field:"priority", sorter:"string", align:"left",width:"60"},
 	{title:"Team", field:"label", sorter:"string", align:"left",width:"100"},
 	{title:"Shipment", field:"name", sorter:"string", align:"left",visible:false},
-	{title:"Status", field:"name", align:"center",width:270,visible:true,formatter:
+	{title:"Status", field:"name", align:"center",width:270,tooltips:false, visible:true,formatter:
 		function(cell, formatterParams, onRendered)
 		{
 			var row = cell.getRow().getData();
 			//row.checkItems;
 			//row.checkItemsChecked;
+			$(cell.getElement()).css({"padding":"0px"});
+			$(cell.getElement()).css({"margin-bottom":"-5px"});
+			var html='<div class="container"><ul class="progressbar">';
+			var data = cell.getRow().getData();
+			if((data.dueComplete === true)&&(data.progress ==100))
+				row.checkItemsChecked = 5;
+			for(var i=0;i<row.checkItemsChecked;i++)
+			{
+				if(i==0)
+					html += '<li title="Package Ready" class="active"><small style="font-size:7px"></small></li>';
+				else if(i==1)
+					html += '<li title="Cosignee Approved" class="active"><small style="font-size:7px"></small></li>';
+				else if(i==2)
+					html += '<li title="Updated in Hardware Inventory" class="active"><small style="font-size:7px"></small></li>';
+				else if(i==3)
+					html += '<li title="Package Picked" class="active"><small style="font-size:7px"></small></li>';
+				else if(i==4)
+					html += '<li title="Package Delivered" class="active"><small style="font-size:7px"></small></li>';
+			}
+			for(var i=row.checkItemsChecked;i<5;i++)
+			{
+				if(i==0)
+					html += '<li title="Package Ready"><small style="font-size:7px"></small></li>';
+				else if(i==1)
+					html += '<li title="Cosignee Approved"><small style="font-size:7px"></small></li>';
+				else if(i==2)
+					html += '<li title="Updated in Hardware Inventory"><small style="font-size:7px"></small></li>';
+				else if(i==3)
+					html += '<li title="Package Picked"><small style="font-size:7px"></small></li>';
+				else if(i==4)
+					html += '<li title="Package Delivered"><small style="font-size:7px"></small></li>';
+				
+			}
+			html += '</ul>';
+
+			return html;
+			
 			var imagename = "/images/"+row.checkItems+"_"+row.checkItemsChecked+".png";
 			$(cell.getElement()).css({"background":"white"});
 			$(cell.getElement()).css({"padding":"0px"});
