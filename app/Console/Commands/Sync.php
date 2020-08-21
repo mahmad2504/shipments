@@ -38,9 +38,18 @@ class Sync extends Command
 		// dueComplete should be set when delivered 
 		//https://api.trello.com/1/cards/5f0eba3c9b5a3854607f8573/actions?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9&filter=updateCard&fields=date
 		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels,url,dueComplete";
-		//dd($url);
-		$data = file_get_contents($url);
 		
+		//$data = file_get_contents($url);
+		$ch = curl_init();
+		// set URL and other appropriate options
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//curl_setopt($ch, CURLOPT_HEADER, 0);
+		// grab URL and pass it to the browser
+		$data = curl_exec($ch);
+		// close cURL resource, and free up system resources
+		curl_close($ch);
+			
 		$data = json_decode($data);
 		
 		$ticket->name = $data->name;
@@ -50,7 +59,16 @@ class Sync extends Command
 		if(($ticket->dueComplete)||(!isset($ticket->createdon)))
 		{
 			$url = "https://api.trello.com/1/cards/".$ticket->id."/actions?key=".$this->key.'&token='.$this->token."&filter=updateCard";
-			$actions = file_get_contents($url);
+			//$actions = file_get_contents($url);
+			$ch = curl_init();
+			// set URL and other appropriate options
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+			//curl_setopt($ch, CURLOPT_HEADER, 0);
+			// grab URL and pass it to the browser
+			$actions = curl_exec($ch);
+			// close cURL resource, and free up system resources
+			curl_close($ch);
 			$actions = json_decode($actions);
 			
 			foreach($actions as $action)
@@ -104,10 +122,19 @@ class Sync extends Command
 	//return;
 		$this->db = new Database();
         $url="https://api.trello.com/1/members/me/boards?key=".$this->key."&token=".$this->token."&fields=name,id,dateLastActivity";
-		$data = file_get_contents($url);
+		//$data = file_get_contents($url);
+		$ch = curl_init();
+		// set URL and other appropriate options
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//curl_setopt($ch, CURLOPT_HEADER, 0);
+		// grab URL and pass it to the browser
+		$data = curl_exec($ch);
+		// close cURL resource, and free up system resources
+		curl_close($ch);
+
 		$boards = json_decode($data);
 		$board = null;
-		
 		foreach($boards as $b)
 		{
 			if($b->id == '5e96d769cab6ce1d5e4fdb91')
@@ -144,7 +171,19 @@ class Sync extends Command
 			echo "Processing List ".$list."\n";
 						
 			$url = "https://api.trello.com/1/lists/".$list."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9&fields=dateLastActivity,closed";
-			$listdata = file_get_contents($url);
+			//$listdata = file_get_contents($url);
+			
+			$ch = curl_init();
+			// set URL and other appropriate options
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+			//curl_setopt($ch, CURLOPT_HEADER, 0);
+			// grab URL and pass it to the browser
+			$listdata = curl_exec($ch);
+			// close cURL resource, and free up system resources
+			curl_close($ch);
+			
+			
 			$listdata = json_decode($listdata );
 			$total = count($listdata);
 			
