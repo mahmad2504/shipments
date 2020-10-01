@@ -37,25 +37,55 @@ class Sync extends Command
 		//Fetch activity
 		// dueComplete should be set when delivered 
 		//https://api.trello.com/1/cards/5f0eba3c9b5a3854607f8573/actions?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9&filter=updateCard&fields=date
-		$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels,url,dueComplete";
+		//$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token."&fields=name,badges,desc,labels,url,dueComplete";
+		$data = $this->Get("/cards/".$ticket->id,'name,badges,desc,labels,url,dueComplete,idChecklists');
+		$data->checkitems = [];
+		if(count($data->idChecklists)>0)
+		{
+			$checklist_data = $this->Get("/checklists/".$data->idChecklists[0],"checkItems");
+			foreach($checklist_data->checkItems as $checkItem)
+			{
+				$data->checkitems[$checkItem->name]=$checkItem->state;
+			}
+			
+		}
+		//$url = "https://api.trello.com/1/cards/".$ticket->id."?key=".$this->key.'&token='.$this->token;
 		
 		//$data = file_get_contents($url);
-		$ch = curl_init();
+		//$ch = curl_init();
 		// set URL and other appropriate options
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//curl_setopt($ch, CURLOPT_URL, $url);
+		//curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
 		//curl_setopt($ch, CURLOPT_HEADER, 0);
 		// grab URL and pass it to the browser
-		$data = curl_exec($ch);
+		//$data = curl_exec($ch);
 		// close cURL resource, and free up system resources
-		curl_close($ch);
+		//curl_close($ch);
+		
+		//$data = json_decode($data);
+		//$states = $this->Get("/cards/".$ticket->id."/checkItemStates",'all');
+		
+		
+		//$url = "https://api.trello.com/1/cards/".$ticket->id."/checkItemStates?key=".$this->key.'&token='.$this->token;
+		//$ch = curl_init();
+		// set URL and other appropriate options
+		//curl_setopt($ch, CURLOPT_URL, $url);
+		//curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//curl_setopt($ch, CURLOPT_HEADER, 0);
+		// grab URL and pass it to the browser
+		//$states = curl_exec($ch);
+		// close cURL resource, and free up system resources
+		//curl_close($ch);
+		
+		//$states = json_decode($states);
+		
 			
-		$data = json_decode($data);
+	//	dump($states);
 		
 		$ticket->name = $data->name;
 		$ticket->desc = $data->desc;
 		$ticket->dueComplete = $data->dueComplete;
-
+        $ticket->checkitems =   $data->checkitems;
 		if(($ticket->dueComplete)||(!isset($ticket->createdon)))
 		{
 			$url = "https://api.trello.com/1/cards/".$ticket->id."/actions?key=".$this->key.'&token='.$this->token."&filter=updateCard";
@@ -104,25 +134,10 @@ class Sync extends Command
 	 
      * @return mixed
      */
-
-    public function handle()
-    {
-		$minutes = $this->option('beat');
-		if($minutes % 10 == 0)// Every 10 minutes
-		    file_get_contents("https://script.google.com/macros/s/AKfycbwCNrLh0BxlYtR3I9iW2Z-4RQK88Hryd4DEC03lIYLoLCce80A/exec?func=alive&device=localshipments");
-		else
-			return;
-	//$url = "https://api.trello.com/1/cards/".'5efed2f133625080952d69bb'."?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
-	
-	//$url = "https://api.trello.com/1/lists/".'5e96d7c8ebdb461cc84f83ba'."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
-			
-	//$data = file_get_contents($url);
-	//$data = json_decode($data);	
-	//dd($data);
-	//return;
-		$this->db = new Database();
-        $url="https://api.trello.com/1/members/me/boards?key=".$this->key."&token=".$this->token."&fields=name,id,dateLastActivity";
-		//$data = file_get_contents($url);
+    public function Get($resource,$fields)
+	{
+		$url="https://api.trello.com/1".$resource."?key=".$this->key."&token=".$this->token."&fields=".$fields;
+		//dump($url);
 		$ch = curl_init();
 		// set URL and other appropriate options
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -133,7 +148,49 @@ class Sync extends Command
 		// close cURL resource, and free up system resources
 		curl_close($ch);
 
-		$boards = json_decode($data);
+		return json_decode($data);
+		
+	}
+    public function handle()
+    {
+		$minutes = $this->option('beat');
+		if($minutes % 10 == 0)// Every 10 minutes
+		    file_get_contents("https://script.google.com/macros/s/AKfycbwCNrLh0BxlYtR3I9iW2Z-4RQK88Hryd4DEC03lIYLoLCce80A/exec?func=alive&device=localshipments");
+		else
+			return;
+		//$this->checklist_data = $this->Get("/checklists/5f756c81d94bde6ff4560019","checkItems");
+		//dump($this->checklist_data);
+		//$this->checklist_data = $this->Get("/checklists/5f74b1da68758c4ce61b0077","checkItems");
+		//dump($this->checklist_data);
+		//foreach( $this->checklist_data->checkItems as $checkItems)
+		//{
+		//	dump($checkItems);
+		//}
+		
+	//$url = "https://api.trello.com/1/cards/".'5efed2f133625080952d69bb'."?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
+	
+	//$url = "https://api.trello.com/1/lists/".'5e96d7c8ebdb461cc84f83ba'."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
+			
+	//$data = file_get_contents($url);
+	//$data = json_decode($data);	
+	//dd($data);
+	//return;
+		$this->db = new Database();
+		$boards = $this->Get("/members/me/boards","name,id,dateLastActivity");
+		
+        //$url="https://api.trello.com/1/members/me/boards?key=".$this->key."&token=".$this->token."&fields=name,id,dateLastActivity";
+		//$data = file_get_contents($url);
+		//$ch = curl_init();
+		// set URL and other appropriate options
+		//curl_setopt($ch, CURLOPT_URL, $url);
+		//curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//curl_setopt($ch, CURLOPT_HEADER, 0);
+		// grab URL and pass it to the browser
+		//$data = curl_exec($ch);
+		// close cURL resource, and free up system resources
+		//curl_close($ch);
+
+		//$boards = json_decode($data);
 		$board = null;
 		foreach($boards as $b)
 		{
@@ -169,22 +226,23 @@ class Sync extends Command
 		foreach($lists as $list)
 		{
 			echo "Processing List ".$list."\n";
+			$listdata = $this->Get("/lists/".$list."/cards","dateLastActivity,closed");
 						
-			$url = "https://api.trello.com/1/lists/".$list."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9&fields=dateLastActivity,closed";
+			//$url = "https://api.trello.com/1/lists/".$list."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9&fields=dateLastActivity,closed";
 			//$listdata = file_get_contents($url);
 			
-			$ch = curl_init();
+			//$ch = curl_init();
 			// set URL and other appropriate options
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		///	curl_setopt($ch, CURLOPT_URL, $url);
+			//curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
 			//curl_setopt($ch, CURLOPT_HEADER, 0);
 			// grab URL and pass it to the browser
-			$listdata = curl_exec($ch);
+			//$listdata = curl_exec($ch);
 			// close cURL resource, and free up system resources
-			curl_close($ch);
+			//curl_close($ch);
 			
 			
-			$listdata = json_decode($listdata );
+			//$listdata = json_decode($listdata );
 			$total = count($listdata);
 			
 			$inprocess = 1;

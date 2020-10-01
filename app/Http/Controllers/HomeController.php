@@ -38,6 +38,7 @@ class HomeController extends Controller
 		$filtered = [];
 		for($i=0;$i<count($tickets);$i++)
 		{
+			//dump($tickets[$i]->closed);
 			$tickets[$i] = $tickets[$i]->jsonSerialize();
 			unset($tickets[$i]->_id);
 			//unset($tickets[$i]->id);

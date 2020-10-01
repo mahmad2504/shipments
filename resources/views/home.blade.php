@@ -129,7 +129,46 @@
 			var data = cell.getRow().getData();
 			if((data.dueComplete === true)&&(data.progress ==100))
 				row.checkItemsChecked = 5;
-			for(var i=0;i<row.checkItemsChecked;i++)
+			var cls = '';
+			if(row.checkitems['Package Ready'] == 'complete')
+				cls = 'active';
+			
+			html += '<li title="Package Ready" class="'+cls+'"><small style="font-size:7px"></small></li>';
+			
+			cls = '';
+			if(row.checkitems['Consignee Approval'] == 'complete')
+				cls = 'active';
+			
+			if('Vector VN3600 (from Danish Hassan cubical)' == row.details.trim())
+			{
+				console.log(row.details+" "+row.checkitems['Consignee Approval']);
+				console.log(row.checkitems);
+				console.log(cls);
+			}
+			
+			html += '<li title="Consignee Approved" class="'+cls+'"><small style="font-size:7px"></small></li>';
+			
+			cls = '';
+			if(row.checkitems['Update Hardware Inventory'] == 'complete')
+				cls = 'active';
+			
+			html += '<li title="Updated in Hardware Inventory" class="'+cls+'"><small style="font-size:7px"></small></li>';
+			
+			cls = '';
+			if(row.checkitems['Package Picked'] == 'complete')
+				cls = 'active';
+			
+			html += '<li title="Package Picked" class="'+cls+'"><small style="font-size:7px"></small></li>';
+			
+			cls = '';
+			if(row.checkitems['Package Delivered'] == 'complete')
+				cls = 'active';
+			
+			html += '<li title="Package Delivered" class="'+cls+'"><small style="font-size:7px"></small></li>';
+			
+			
+			
+		/*	for(var i=0;i<row.checkItemsChecked;i++)
 			{
 				if(i==0)
 					html += '<li title="Package Ready" class="active"><small style="font-size:7px"></small></li>';
@@ -155,7 +194,7 @@
 				else if(i==4)
 					html += '<li title="Package Delivered"><small style="font-size:7px"></small></li>';
 				
-			}
+			}*/
 			html += '</ul>';
 
 			return html;
