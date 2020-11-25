@@ -16,7 +16,4 @@ Route::get('/', function()
 {
     return 'Access to this webportal is restricted to authorized users ony<br>For access, please send an email to Adnan_AbbasMalik@mentor.com';
 });
-
-Route::get('/{team}/{code}', 'HomeController@teamview')->name('teamview');
-
-
+Route::get('/{team}/{code?}', 'HomeController@teamview')->name('teamview');

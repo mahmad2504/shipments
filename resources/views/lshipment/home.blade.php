@@ -8,7 +8,7 @@
 		<link rel="stylesheet" href="{{ asset('tabulator/css/tabulator.min.css') }}" />
 		<link rel="stylesheet" href="{{ asset('attention/attention.css') }}" />
 		<link rel="stylesheet" href="{{ asset('stepprogress/stepprogressbar.css') }}" />
-    <style>
+		<style>
 		.tabulator [tabulator-field="summary"]{
 				max-width:200px;
 		}
@@ -38,6 +38,7 @@
     <body>
 	<div class="flex-container">
 		<div class="row"> 
+		    <br>
 			<div style="font-weight:bold;font-size:20px;line-height: 50px;height:50px;background-color:#4682B4;color:white;" class="flex-item"> 
 			 <img style="float:left;" height="50px" src="/images/mentor.png"></img>
 			 <div style="margin-right:150px;">{{ $team }} - Local Shipments Dashboard - Pakistan</div>
@@ -89,6 +90,7 @@
 		labels[row.label]=row.label;
 		
 	}
+	console.log(tabledata);
 	labels['Others']='Others';
 	$('#select').append('<option value="'+'Select'+'" selected="selected">'+'Select'+'</option>');
 	for(var i in labels)

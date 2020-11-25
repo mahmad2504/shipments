@@ -4,14 +4,14 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Database;
-class Sync extends Command
+class SyncLshipments extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'sync {--beat=0}';
+    protected $signature = 'synclshipments {--beat=0}';
 
     /**
      * The console command description.
@@ -25,6 +25,8 @@ class Sync extends Command
      *
      * @return void
      */
+	protected $dbname = "lshipments";
+    protected $server = "mongodb://127.0.0.1";
     public function __construct()
     {
 		$this->key=env("TRELLO_KEY"); 
@@ -79,7 +81,7 @@ class Sync extends Command
 		
 		//$states = json_decode($states);
 		
-			
+		
 	//	dump($states);
 		
 		$ticket->name = $data->name;
@@ -158,65 +160,10 @@ class Sync extends Command
 		    file_get_contents("https://script.google.com/macros/s/AKfycbwCNrLh0BxlYtR3I9iW2Z-4RQK88Hryd4DEC03lIYLoLCce80A/exec?func=alive&device=localshipments");
 		else
 			return;
-		//$this->checklist_data = $this->Get("/checklists/5f756c81d94bde6ff4560019","checkItems");
-		//dump($this->checklist_data);
-		//$this->checklist_data = $this->Get("/checklists/5f74b1da68758c4ce61b0077","checkItems");
-		//dump($this->checklist_data);
-		//foreach( $this->checklist_data->checkItems as $checkItems)
-		//{
-		//	dump($checkItems);
-		//}
-		
-	//$url = "https://api.trello.com/1/cards/".'5efed2f133625080952d69bb'."?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
-	
-	//$url = "https://api.trello.com/1/lists/".'5e96d7c8ebdb461cc84f83ba'."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
-			
-	//$data = file_get_contents($url);
-	//$data = json_decode($data);	
-	//dd($data);
-	//return;
-		$this->db = new Database();
-		$boards = $this->Get("/members/me/boards","name,id,dateLastActivity");
-		
-        //$url="https://api.trello.com/1/members/me/boards?key=".$this->key."&token=".$this->token."&fields=name,id,dateLastActivity";
-		//$data = file_get_contents($url);
-		//$ch = curl_init();
-		// set URL and other appropriate options
-		//curl_setopt($ch, CURLOPT_URL, $url);
-		//curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-		//curl_setopt($ch, CURLOPT_HEADER, 0);
-		// grab URL and pass it to the browser
-		//$data = curl_exec($ch);
-		// close cURL resource, and free up system resources
-		//curl_close($ch);
 
-		//$boards = json_decode($data);
-		$board = null;
-		foreach($boards as $b)
-		{
-			if($b->id == '5e96d769cab6ce1d5e4fdb91')
-			{
-				$board = $b;
-				break;
-			}	
-			//echo $b->name." ".$b->id."\n";
-		}
-		if($board == null)
-		{
-			echo "Board Not Found\n";
-			return;
-		}
-		
-		if(file_exists("lastupdated"))
-		{
-			$lastupdated = file_get_contents("lastupdated");
-			//if($board->dateLastActivity == $lastupdated)
-			//	return;
-			
-		}
+		$this->db = new Database($this->server,$this->dbname);
+		$board = $this->Get("/boards/5e96d769cab6ce1d5e4fdb91","dateLastActivity,name");	
 		echo "Updating ".$board->name."\n";
-		
-		echo $board->dateLastActivity."\n";
 		//$url="https://api.trello.com/1/boards/5e96d769cab6ce1d5e4fdb91/lists?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9";
 		$lists =  ["5e96d7c8ebdb461cc84f83ba","5e96d7a0dffcf41ccac595c6"];
 		
@@ -227,7 +174,7 @@ class Sync extends Command
 		{
 			echo "Processing List ".$list."\n";
 			$listdata = $this->Get("/lists/".$list."/cards","dateLastActivity,closed");
-						
+							
 			//$url = "https://api.trello.com/1/lists/".$list."/cards?key=005173e331a61db3768a13e6e9d1160e&token=0e457d47dbd6eb1ed558ac42f8ba03b94738cac35a738d991cdf797d6fcfbbe9&fields=dateLastActivity,closed";
 			//$listdata = file_get_contents($url);
 			
@@ -288,6 +235,6 @@ class Sync extends Command
 		//dd($response);
 		//$data = file_get_contents($url);
 		
-		file_put_contents("lastupdated",$board->dateLastActivity);
+		file_put_contents("lastupdated_lshipment",$board->dateLastActivity);
     }
 }

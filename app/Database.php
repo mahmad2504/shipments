@@ -5,10 +5,10 @@ use \MongoDB\Client;
 use \MongoDB\BSON\UTCDateTime;
 class Database
 {
-	function __construct()
+	function __construct($server,$db)
 	{
-		$dbname = env("MONGO_DB_NAME", "localshipments");
-		$server = env("MONGO_DB_SERVER", "mongodb://127.0.0.1");
+		$dbname = $db;
+		$server = $server;
 		
 		$mongoClient=new Client($server);
 		$this->db = $mongoClient->$dbname;
@@ -26,6 +26,13 @@ class Database
 		//$query =['dayLastActivity' => ['$gt' => '2020-07-01']];
 
 		return $this->Read($query,['due' => 1],[]);
+	}
+	public function ReadAll()
+	{
+		$active =  $this->Read(['list'=> ['$nin' =>['Expense']]],['dateLastActivity' => -1],[]);
+		$date = new \DateTime('-6 days');
+		$closed = $this->Read(['list'=>'Expense','dayLastActivity'=>['$gt' => $date->format('Y-m-d')]  ],['dateLastActivity' => -1],[]);
+	    return array_merge($active->toArray(),$closed->toArray());
 	}
 	public function Read($query,$sort=[],$projection=[],$limit=-1)
 	{

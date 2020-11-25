@@ -20,20 +20,85 @@ class HomeController extends Controller
     {
 	
     }
-	//be5d5
-	public function TeamView(Request $request,$team,$code)
+	public function HandleInternationalShipments(Request $request)
+	{
+		$db = new Database("mongodb://127.0.0.1","ishipments");
+		$tickets = $db->ReadAll();
+        $filtered = [];
+		for($i=0;$i<count($tickets);$i++)
+		{
+			$ticket = $tickets[$i];
+			$obj =  new \StdClass();
+			$ticket = $ticket->jsonSerialize();
+			unset($ticket->_id);
+			/// Hardware Details //////
+			$parts = explode("Qty:",$ticket->desc);
+			$parts = explode("\n",$parts[0]);
+			$del = '';
+			$hardware = '';
+			for($j=1;$j<count($parts);$j++)
+			{
+				if(strlen(trim($parts[$j]))>0)
+				{
+					$parts[$j] = str_replace("-",'',$parts[$j]);
+					$hardware .= $del.trim($parts[$j]);
+					$del=',';
+				}
+			}
+			$obj->hardware = $hardware;
+			// Owener ////
+			$parts = explode("-",$ticket->name);
+			$obj->owner = $parts[2];
+			$obj->source = $parts[1];
+			$obj->team = $ticket->label;
+			if(isset($ticket->checkitems['Shipment Dispatched']->state))
+			{
+				if($ticket->checkitems['Shipment Dispatched']->state == 'complete')
+				{
+					$obj->shipment_date = $ticket->checkitems['Shipment Dispatched']->date;
+				}
+			}
+			$obj->trackingno = $ticket->trackingno;
+			if(($ticket->list == 'Upcoming')||($ticket->list == 'Shipment')) 
+			    $obj->status = 'Ready';
+			if($ticket->checkitems['Shipment Dispatched'] == 'complete')
+				$obj->status = 'Dispatched';
+			if($ticket->list == 'Custom')
+				$obj->status = 'Customs';
+			if($ticket->list == 'Expense')
+				$obj->status = 'Received';
+			$obj->url = $ticket->url;
+			$filtered[]=$obj;
+		}
+		$tickets = $filtered;
+		$lastupdated="Never Updated";
+		if(file_exists("../lastupdated_ishipment"))
+		{
+			$lastupdated = file_get_contents("../lastupdated_ishipment");
+			$lastupdated =  new \DateTime($lastupdated);
+			$lastupdated->setTimezone(new \DateTimeZone('Asia/Karachi'));
+			$lastupdated=$lastupdated->format('Y-m-d H:i:s');
+		}
+		
+		return view('ishipment.home',compact('tickets','lastupdated'));
+	}
+	public function TeamView(Request $request,$team,$code='nonenone')
 	{
 		if(strlen($code) < 5)
 		{
 			return ['result'=>'Unautorized Aceess'];
 		}
+		if(strtolower($team) == 'international')
+		{
+			return $this->HandleInternationalShipments($request);
 		
+		}
 		if( count(explode($code,md5(strtolower($team))))==2)
 		{}
 		else
 			return ['result'=>'Unautorized Aceess'];
 		
-		$db = new Database();
+		$db = new Database("mongodb://127.0.0.1","lshipments");
 		$tickets = $db->ReadActive()->toArray();
 		$filtered = [];
 		for($i=0;$i<count($tickets);$i++)
@@ -110,9 +175,9 @@ class HomeController extends Controller
 		$tickets = $filtered;
 	
 		$lastupdated="Never Updated";
-		if(file_exists("../lastupdated"))
+		if(file_exists("../lastupdated_lshipment"))
 		{
-			$lastupdated = file_get_contents("../lastupdated");
+			$lastupdated = file_get_contents("../lastupdated_lshipment");
 			$lastupdated =  new \DateTime($lastupdated);
 			$lastupdated->setTimezone(new \DateTimeZone('Asia/Karachi'));
 			$lastupdated=$lastupdated->format('Y-m-d H:i:s');
@@ -122,7 +187,7 @@ class HomeController extends Controller
 			$admin=1;
 		
 		$team = ucfirst($team);
-		return view('home',compact('admin','tickets','lastupdated','team'));
+		return view('lshipment.home',compact('admin','tickets','lastupdated','team'));
 	}
 	public function AdminView(Request $request)
 	{
